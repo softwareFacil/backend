@@ -8,7 +8,10 @@ var UserSchema = Schema({
   lastname: String,
   email: String,
   password: String,
-  role: String
+  role: String,
+  foto: String,
+  fono: String,
+  ubicacion: String
 });
 
 module.exports = MONGOOSE.model( 'User', UserSchema );

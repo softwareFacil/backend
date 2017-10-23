@@ -1,7 +1,7 @@
 'use strict'
 
 //modulos
-const BCRYPT = require('bcrypt-nodejs'); 
+const BCRYPT = require('bcrypt-nodejs');
 
 //modelos
 const User = require( '../models/user' );
@@ -26,11 +26,14 @@ function saveUser( req, res ){
   var params = req.body;
 
   //Asignar valores al objeto de usuario
-  if (params.password && params.name && params.lastname && params.email) {
+  if (params.password && params.name && params.lastname && params.email && params.fono && params.ubicacion) {
     user.name = params.name;
     user.lastname = params.lastname;
     user.email = params.email;
     user.role = 'ROLE_USER';
+    user.foto = '';
+    user.fono = params.fono;
+    user.ubicacion = params.ubicacion;
 
     User.findOne({ email: user.email.toLowerCase() }, (err, issetUser) => {
       if (err) {
