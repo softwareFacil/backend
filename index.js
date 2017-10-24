@@ -5,7 +5,7 @@ var app = require( './app' );
 var port = process.env.PORT || 3789;
 
 MONGOOSE.Promise = global.Promise;
-MONGOOSE.connect( 'mongodb://localhost:27017/Fondef', { useMongoClient:true })
+MONGOOSE.connect( 'mongodb://localhost:27017/Agenda', { useMongoClient:true })
         .then(() => {
           console.log( 'Conexion Exitosa ..' );
 
