@@ -5,17 +5,24 @@ const BCRYPT = require('bcrypt-nodejs');
 
 //modelos
 const User = require( '../models/user' );
+const Events = require( '../models/events' );
 
 //servicios jwt-simple
 var jwt = require( '../services/jwt' );
 
 //Funciones
-function pruebas( req, res ){
-  res.status(200).send({
-    message: 'Probando controlador',
-    user: req.user
+function getEvents( req, res ){
+  Events.find({}).exec(( err, events ) => {
+     if( err ){
+       res.status(500).send({ message: 'Error la petición' })
+     }else {
+       if ( !events ) {
+         res.status(404).send({ message: 'No hay eventos' })
+       }else {
+         res.status(200).send({ events })
+       }
+     }
   });
-
 }
 
 function saveUser( req, res ){
@@ -124,7 +131,7 @@ function updateUser( req, res ){
 
 //Exportar
 module.exports = {
-  pruebas,
+  getEvents,
   saveUser,
   login,
   updateUser
