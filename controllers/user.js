@@ -75,6 +75,45 @@ function getIconFile( req, res) {
   });
 }
 
+function saveEvent( req, res ){
+  //Crear Objeto user
+  var event = new Events();
+
+  //Tomar parametros
+  var params = req.body;
+
+  //Asignar valores al objeto de usuario
+  if ( params.name && params.descripcion && params.org && params.fecha_inicio
+    && params.fecha_termino && params.icon && params.tipo && params.image
+    && params.ubicacion.nombre && params.ubicacion.lat && params.ubicacion.long ) {
+    event.name = params.name;
+    event.descripcion = params.descripcion;
+    event.org = params.org;
+    event.fecha_inicio = params.fecha_inicio;
+    event.fecha_termino = params.fecha_termino;
+    event.icon = params.icon;
+    event.tipo = params.tipo;
+    event.image = params.image;
+    event.ubicacion.nombre = params.ubicacion.nombre;
+    event.ubicacion.lat = params.ubicacion.lat;
+    event.ubicacion.long = params.ubicacion.long;
+
+    event.save(( err, eventStored) => {
+      if ( err ) {
+        res.status(500).send({ message: 'Error al guardar el evento' });
+      }else {
+        if ( !eventStored ) {
+          res.status(404).send({ message: 'No se ha registrado el evento' });
+        }else {
+          res.status(200).send({ events: eventStored, message: 'Evento guardado correctamentede'})
+        }
+      }
+    });
+  }else {
+    res.status(200).send({ message: 'Introduce los datos correctamente' });
+  }
+}
+
 function saveUser( req, res ){
   //Crear Objeto user
   var user = new User();
@@ -165,11 +204,11 @@ function updateUser( req, res ){
 }
 
 function uploadImg( req, res ) {
-  var userId = req.params.id;
+  // var userId = req.params.id;
   var file_name = 'No subido..';
-
   if ( req.files ) {
     var file_path = req.files.image.path;
+    console.log(file_path);
     var file_split = file_path.split('/');
     var file_name = file_split[2];
 
@@ -194,6 +233,7 @@ function uploadImg( req, res ) {
           res.status(500).send({ message: 'Error al actualizar usuario' });
         }else {
           if (!eventUpdated) {
+            console.log(eventUpdated);
             res.status(404).send({ message: 'No se ha podido actualizar el usuario' });
           }else {
             res.status(200).send({ events: eventUpdated, image: file_name });
@@ -219,5 +259,6 @@ module.exports = {
   uploadImg,
   getImageFile,
   getIconFile,
-  TypeEvents
+  TypeEvents,
+  saveEvent
 };

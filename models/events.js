@@ -7,7 +7,7 @@ var EventSchema = Schema({
   name: String,
   descripcion: String,
   org: String,
-  espacios : {
+  ubicacion : {
       lat : Number,
       long : Number,
       nombre : String
