@@ -16,7 +16,8 @@ var EventSchema = Schema({
   fecha_termino: String,
   icon: String,
   tipo: String,
-  image: String
+  image: String,
+  fono: String,
 });
 
 module.exports = MONGOOSE.model( 'Events', EventSchema );

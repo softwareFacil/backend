@@ -85,7 +85,7 @@ function saveEvent( req, res ){
   //Asignar valores al objeto de usuario
   if ( params.name && params.descripcion && params.org && params.fecha_inicio
     && params.fecha_termino && params.icon && params.tipo && params.image
-    && params.ubicacion.nombre && params.ubicacion.lat && params.ubicacion.long ) {
+    && params.ubicacion.nombre && params.ubicacion.lat && params.ubicacion.long && params.fono) {
     event.name = params.name;
     event.descripcion = params.descripcion;
     event.org = params.org;
@@ -97,6 +97,7 @@ function saveEvent( req, res ){
     event.ubicacion.nombre = params.ubicacion.nombre;
     event.ubicacion.lat = params.ubicacion.lat;
     event.ubicacion.long = params.ubicacion.long;
+    event.fono = params.fono;
 
     event.save(( err, eventStored) => {
       if ( err ) {
