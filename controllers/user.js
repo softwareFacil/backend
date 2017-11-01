@@ -123,7 +123,7 @@ function saveUser( req, res ){
   var params = req.body;
 
   //Asignar valores al objeto de usuario
-  if (params.password && params.name && params.lastname && params.email && params.fono && params.ubicacion) {
+  if (params.password && params.name && params.lastname && params.email && params.fono && params.ubicacion && params.foto) {
     user.name = params.name;
     user.lastname = params.lastname;
     user.email = params.email;
@@ -131,6 +131,7 @@ function saveUser( req, res ){
     user.foto = '';
     user.fono = params.fono;
     user.ubicacion = params.ubicacion;
+    user.foto = params.foto;
 
     User.findOne({ email: user.email.toLowerCase() }, (err, issetUser) => {
       if (err) {
@@ -147,14 +148,14 @@ function saveUser( req, res ){
                   if ( !userStored ) {
                     res.status(404).send({ message: 'No se ha registrado el usuario' });
                   }else {
-                    res.status(200).send({ user: userStored })
+                    res.status(200).send({ user: userStored, message: 'Registro completado' })
 
                   }
                 }
               });
           });
         }else {
-          res.status(200).send({ message: 'El usuario no se puede registrar' });
+          res.status(200).send({ message: 'Ese correo ya se encuentra registrado' });
         }
       }
     });
@@ -251,6 +252,38 @@ function uploadImg( req, res ) {
   }
 }
 
+function uploadIcon( req, res ) {
+  var file_name = 'No subido..';
+  if ( req.files ) {
+    var file_path = req.files.image.path;
+    console.log(file_path);
+    var file_split = file_path.split('/');
+    var file_name = file_split[2];
+
+    var ext_split = file_name.split( '\.' );
+    var file_ext = ext_split[1];
+
+    if ( file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif' ) {
+      Events.find( { image: file_name }, { new:true }, ( err, eventUpdated ) => {
+        if (err) {
+          res.status(500).send({ message: 'Error al actualizar usuario' });
+        }else {
+          if (!eventUpdated) {
+            console.log(eventUpdated);
+            res.status(404).send({ message: 'No se ha podido actualizar el usuario' });
+          }else {
+            res.status(200).send({ events: eventUpdated, image: file_name });
+          }
+        }
+      });
+    }else {
+      res.status(200).send({ message: 'Extension no valida' })
+    }
+  }else {
+    res.status(200).send({ message: 'No se ha subido la imagen  ' })
+  }
+}
+
 //Exportar
 module.exports = {
   getEvents,
@@ -258,6 +291,7 @@ module.exports = {
   login,
   updateUser,
   uploadImg,
+  uploadIcon,
   getImageFile,
   getIconFile,
   TypeEvents,
