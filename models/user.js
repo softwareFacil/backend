@@ -11,7 +11,8 @@ var UserSchema = Schema({
   role: String,
   foto: String,
   fono: String,
-  ubicacion: String
+  ubicacion: String,
+  state: Boolean
 });
 
 module.exports = MONGOOSE.model( 'User', UserSchema );

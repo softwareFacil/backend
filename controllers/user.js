@@ -13,6 +13,21 @@ const Events = require( '../models/events' );
 var jwt = require( '../services/jwt' );
 
 //Funciones
+function validateUser( req, res ){
+  var userId = req.params.userId;
+  User.findOne({ _id: userId }, ( err, validate ) => {
+    if ( err ) {
+      res.status(500).send({ message: 'Usuario no encontrado' });
+    }else {
+      if (validate) {
+        res.status(200).send({ state: true, message: 'Usuario validado' });
+      }else {
+
+      }
+    }
+  });
+}
+
 function TypeEvents( req, res ){
   var params = req.body;
   console.log(params);
@@ -27,6 +42,21 @@ function TypeEvents( req, res ){
         res.status(200).send({ typeEvent });
       }else {
         res.status(404).send({ message: 'Los eventos de este tipo no se encontraron' });
+      }
+    }
+  });
+}
+
+function getUsers( req, res ){
+  var state = false;
+  User.find({ state: state }, ( err, stateUser ) => {
+    if (err) {
+      res.status(500).send({ message: 'Error al buscar el estado del usuario' });
+    }else {
+      if (stateUser) {
+        res.status(200).send({ user: stateUser, message: 'Usuarios no validados' });
+      }else {
+        res.status(404).send({ message: 'No hay solicitudes de registro' });
       }
     }
   });
@@ -49,7 +79,7 @@ function getEvents( req, res ){
   });
 }
 
-function getImageFile( req, res) {
+function getImageFile( req, res ) {
   var imageFile = req.params.imageFile;
   var path_file = './img/imagenes/'+imageFile;
 
@@ -62,7 +92,7 @@ function getImageFile( req, res) {
   });
 }
 
-function getIconFile( req, res) {
+function getIconFile( req, res ) {
   var iconFile = req.params.iconFile;
   var path_file = './img/icono/'+iconFile;
 
@@ -128,10 +158,10 @@ function saveUser( req, res ){
     user.lastname = params.lastname;
     user.email = params.email;
     user.role = 'ROLE_USER';
-    user.foto = '';
     user.fono = params.fono;
     user.ubicacion = params.ubicacion;
     user.foto = params.foto;
+    user.state = false;
 
     User.findOne({ email: user.email.toLowerCase() }, (err, issetUser) => {
       if (err) {
@@ -295,5 +325,7 @@ module.exports = {
   getImageFile,
   getIconFile,
   TypeEvents,
-  saveEvent
+  saveEvent,
+  getUsers,
+  validateUser
 };

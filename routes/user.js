@@ -11,6 +11,8 @@ var md_upload = multipart({ uploadDir: './img/imagenes' });
 var md_uploadI = multipart({ uploadDir: './img/icono' });
 
 api.get( '/events', UserController.getEvents );
+api.get( '/users', UserController.getUsers );
+api.put( '/validateUser/:userId', UserController.validateUser );
 api.post( '/register', UserController.saveUser );
 api.post( '/saveEvent', UserController.saveEvent );
 api.post( '/login', UserController.login );
