@@ -15,14 +15,32 @@ var jwt = require( '../services/jwt' );
 //Funciones
 function validateUser( req, res ){
   var userId = req.params.userId;
-  User.findOne({ _id: userId }, ( err, validate ) => {
+  var update = req.body
+
+  User.findByIdAndUpdate( userId, update, ( err, validate ) => {
     if ( err ) {
-      res.status(500).send({ message: 'Usuario no encontrado' });
+      res.status(500).send({ message: 'Error al validar el usuario' });
     }else {
       if (validate) {
-        res.status(200).send({ state: true, message: 'Usuario validado' });
+        res.status(200).send({ message: 'Usuario validado' });
       }else {
+        res.status(404).send({ message: 'El usuario no se pudo validar' });
+      }
+    }
+  });
+}
 
+function removeUser( req, res ){
+  var userId = req.params.userId;
+
+  User.findByIdAndRemove( userId, ( err, remove ) => {
+    if ( err ) {
+      res.status(500).send({ message: 'Error al remover el usuario' });
+    }else {
+      if (remove) {
+        res.status(200).send({ user: remove, message: 'Usuario eliminado' });
+      }else {
+        res.status(404).send({ message: 'El usuario no se pudo eliminar' });
       }
     }
   });
@@ -30,15 +48,15 @@ function validateUser( req, res ){
 
 function TypeEvents( req, res ){
   var params = req.body;
-  console.log(params);
+
   var tipo = params.type;
-  console.log(tipo);
+
   Events.find({ tipo: tipo }, ( err, typeEvent) => {
     if ( err ) {
       res.status(500).send({ message: 'Error al buscar el tipo de evento' });
     }else {
       if (typeEvent) {
-        console.log(typeEvent);
+
         res.status(200).send({ typeEvent });
       }else {
         res.status(404).send({ message: 'Los eventos de este tipo no se encontraron' });
@@ -327,5 +345,6 @@ module.exports = {
   TypeEvents,
   saveEvent,
   getUsers,
-  validateUser
+  validateUser,
+  removeUser
 };
