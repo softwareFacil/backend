@@ -17,12 +17,24 @@ api.delete( '/removeUser/:userId', UserController.removeUser );
 api.post( '/register', UserController.saveUser );
 api.post( '/saveEvent', UserController.saveEvent );
 api.post( '/login', UserController.login );
-api.put( '/update-user/:id', md_auth.ensureAuth, UserController.updateUser );
 api.post( '/upload-img-event', [ md_upload ], UserController.uploadImg );
 api.post( '/upload-img-user', [ md_uploadI ], UserController.uploadIcon );
 api.get( '/get-img/:imageFile', UserController.getImageFile );
 api.get( '/get-icon/:iconFile', UserController.getIconFile );
-api.post( '/type-event', UserController.TypeEvents );
+api.get( '/getEventsByType/:type', UserController.getEventsByType );
+api.get( '/getEventsByOrg/:org', UserController.getEventsByOrg );
+api.delete( '/removeEvent/:eventId', UserController.removeEvent );
+api.get( '/getEventsBySpace/:space', UserController.getEventsBySpace );
+api.get( '/getCategories', UserController.getCategories );
+api.post( '/saveLocation', UserController.saveLocation );
+api.get( '/getLocations', UserController.getLocations );
+api.post( '/saveCategory', UserController.saveCategory );
+api.get( '/getEventsById/:id', UserController.getEventsById );
+api.put( '/updateEvent/:id', UserController.updateEvent );
+
+
+
+
 
 
 module.exports = api;

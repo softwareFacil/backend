@@ -8,6 +8,9 @@ const path = require( 'path' );
 //modelos
 const User = require( '../models/user' );
 const Events = require( '../models/events' );
+const Catergories = require( '../models/categories' );
+const Location = require( '../models/location' );
+const Locations = require( '../models/location' );
 
 //servicios jwt-simple
 var jwt = require( '../services/jwt' );
@@ -41,25 +44,6 @@ function removeUser( req, res ){
         res.status(200).send({ user: remove, message: 'Usuario eliminado' });
       }else {
         res.status(404).send({ message: 'El usuario no se pudo eliminar' });
-      }
-    }
-  });
-}
-
-function TypeEvents( req, res ){
-  var params = req.body;
-
-  var tipo = params.type;
-
-  Events.find({ tipo: tipo }, ( err, typeEvent) => {
-    if ( err ) {
-      res.status(500).send({ message: 'Error al buscar el tipo de evento' });
-    }else {
-      if (typeEvent) {
-
-        res.status(200).send({ typeEvent });
-      }else {
-        res.status(404).send({ message: 'Los eventos de este tipo no se encontraron' });
       }
     }
   });
@@ -171,9 +155,9 @@ function saveUser( req, res ){
   var params = req.body;
 
   //Asignar valores al objeto de usuario
-  if (params.password && params.name && params.lastname && params.email && params.fono && params.ubicacion && params.foto) {
+  if (params.password && params.name && params.descripcion && params.email && params.fono && params.ubicacion && params.foto) {
     user.name = params.name;
-    user.lastname = params.lastname;
+    user.descripcion = params.descripcion;
     user.email = params.email;
     user.role = 'ROLE_USER';
     user.fono = params.fono;
@@ -197,7 +181,6 @@ function saveUser( req, res ){
                     res.status(404).send({ message: 'No se ha registrado el usuario' });
                   }else {
                     res.status(200).send({ user: userStored, message: 'Registro completado' })
-
                   }
                 }
               });
@@ -246,12 +229,6 @@ function login( req, res ){
 
 }
 
-function updateUser( req, res ){
-  var userId = req.params.id;
-  var update = req.body;
-
-
-}
 
 function uploadImg( req, res ) {
   // var userId = req.params.id;
@@ -332,19 +309,228 @@ function uploadIcon( req, res ) {
   }
 }
 
+function getEventsByOrg( req, res ){
+  var org = req.params.org;
+
+  Events.find({ org: org }).exec(( err, events ) => {
+     if( err ){
+       res.status(500).send({ message: 'Error la petición' })
+     }else {
+       if ( !events ) {
+         res.status(404).send({ message: 'No hay eventos de esta organización' })
+       }else {
+         res.status(200).send({ events })
+       }
+     }
+  });
+}
+
+function removeEvent( req, res ){
+  var eventId = req.params.eventId;
+
+  Events.findByIdAndRemove( eventId, ( err, remove ) => {
+    if ( err ) {
+      res.status(500).send({ message: 'Error al eliminar el evento' });
+    }else {
+      if (remove) {
+        res.status(200).send({ event: remove, message: 'Evento eliminado' });
+      }else {
+        res.status(404).send({ message: 'El event no se pudo eliminar' });
+      }
+    }
+  });
+}
+
+function getEventsBySpace( req, res ){
+  var space = req.params.space;
+
+  Events.find({ 'ubicacion.nombre': space }).exec(( err, events ) => {
+     if( err ){
+       res.status(500).send({ message: 'Error la petición' })
+     }else {
+       if ( !events ) {
+         res.status(404).send({ message: 'No hay eventos en este lugar' })
+       }else {
+         res.status(200).send({ events })
+       }
+     }
+  });
+}
+
+function getEventsByType( req, res ){
+  var type = req.params.type;
+
+  Events.find({ tipo: type }).exec(( err, events ) => {
+     if( err ){
+       res.status(500).send({ message: 'Error la petición' })
+     }else {
+       if ( !events ) {
+         res.status(404).send({ message: 'Los eventos de este tipo no se encontraron' })
+       }else {
+         res.status(200).send({ events })
+       }
+     }
+  });
+}
+
+function getCategories( req, res ){
+
+  Catergories.find({}).exec(( err, categories ) => {
+     if( err ){
+       res.status(500).send({ message: 'Error la petición' })
+     }else {
+       if ( !categories ) {
+         res.status(404).send({ message: 'Las categorias no se encontraron' })
+       }else {
+         res.status(200).send({ Catergories: categories })
+       }
+     }
+  });
+}
+
+function saveLocation( req, res ){
+  //Crear Objeto
+  var location = new Location();
+
+  //Tomar parametros
+  var params = req.body;
+
+  if ( params.name && params.lat && params.lng ) {
+    location.name = params.name;
+    location.lat = params.lat;
+    location.lng = params.lng;
+
+    Location.findOne({ name: location.name.toLowerCase() }, (err, issetLocation) => {
+      if (err) {
+        res.status(500).send({ message: 'Error al comprobar el lugar' })
+      }else{
+        if(!issetLocation){
+          location.save(( err, loc) => {
+            if ( err ) {
+              res.status(500).send({ message: 'Error al guardar la ubicacion' });
+            }else {
+              if ( !loc ) {
+                res.status(404).send({ message: 'No se ha registrado el lugar' });
+              }else {
+                res.status(200).send({ location: loc, message: 'Registro completado' })
+              }
+            }
+          });
+        }else {
+          res.status(200).send({ message: 'Ese lugar ya se encuentra registrado' });
+        }
+      }
+    });
+  }else {
+    res.status(200).send({ message: 'Introduce los datos correctamente' });
+  }
+}
+
+function getLocations( req, res ){
+
+  Locations.find({}).exec(( err, locations ) => {
+     if( err ){
+       res.status(500).send({ message: 'Error la petición' })
+     }else {
+       if ( !locations ) {
+         res.status(404).send({ message: 'No se encontraron datos' })
+       }else {
+         res.status(200).send({ Locations: locations })
+       }
+     }
+  });
+}
+
+function saveCategory( req, res ){
+  //Crear Objeto
+  var categories = new Catergories();
+
+  //Tomar parametros
+  var params = req.body;
+
+  if ( params.actividades  ) {
+    categories.actividades = params.actividades.toUpperCase();
+
+    Catergories.findOne({ actividades: categories.actividades }, (err, issetCategory) => {
+      if (err) {
+        res.status(500).send({ message: 'Error al comprobar el lugar' })
+      }else{
+        if(!issetCategory){
+          categories.save(( err, cat) => {
+            if ( err ) {
+              res.status(500).send({ message: 'Error al guardar la categoria' });
+            }else {
+              if ( !cat ) {
+                res.status(404).send({ message: 'No se ha registrado la categoria' });
+              }else {
+                res.status(200).send({ categories: cat, message: 'Registro completado' })
+              }
+            }
+          });
+        }else {
+          res.status(200).send({ message: 'Esa categoria ya se encuentra registrada' });
+        }
+      }
+    });
+  }else {
+    res.status(200).send({ message: 'Introduce los datos correctamente' });
+  }
+}
+
+function getEventsById( req, res ){
+  var id = req.params.id;
+
+  Events.findById( id, ( err, events ) => {
+     if( err ){
+       res.status(500).send({ message: 'Error la petición' })
+     }else {
+       if ( !events ) {
+         res.status(404).send({ message: 'El evento no existe' })
+       }else {
+         res.status(200).send({ events })
+       }
+     }
+  });
+}
+
+function updateEvent( req, res ){
+  var eventId = req.params.id;
+  var update = req.body;
+
+  Events.findByIdAndUpdate( eventId, update, ( err, validate ) => {
+    if ( err ) {
+      res.status(500).send({ message: 'Error al buscar el evento' });
+    }else {
+      if (validate) {
+        res.status(200).send({ message: 'Evento actualizado' });
+      }else {
+        res.status(404).send({ message: 'El evento no se pudo actualizar' });
+      }
+    }
+  });
+}
+
 //Exportar
 module.exports = {
   getEvents,
   saveUser,
   login,
-  updateUser,
   uploadImg,
   uploadIcon,
   getImageFile,
   getIconFile,
-  TypeEvents,
+  getEventsByType,
   saveEvent,
   getUsers,
   validateUser,
-  removeUser
+  removeUser,
+  getEventsByOrg,
+  removeEvent,
+  getEventsBySpace,
+  getCategories,
+  saveLocation,
+  getLocations,
+  saveCategory,
+  getEventsById,
+  updateEvent
 };

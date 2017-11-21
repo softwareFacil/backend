@@ -5,7 +5,7 @@ var Schema = MONGOOSE.Schema;
 
 var UserSchema = Schema({
   name: String,
-  lastname: String,
+  descripcion: String,
   email: String,
   password: String,
   role: String,
