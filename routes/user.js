@@ -31,8 +31,10 @@ api.get( '/getLocations', UserController.getLocations );
 api.post( '/saveCategory', UserController.saveCategory );
 api.get( '/getEventsById/:id', UserController.getEventsById );
 api.put( '/updateEvent/:id', UserController.updateEvent );
-
-
+api.get( '/getOrganization', UserController.getOrganization );
+api.get( '/getUserById/:id', UserController.getUserById );
+api.put( '/updateUser/:id', UserController.updateUser );
+api.get( '/getAllUsers', UserController.getAllUsers );
 
 
 

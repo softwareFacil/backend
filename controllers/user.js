@@ -64,6 +64,21 @@ function getUsers( req, res ){
   });
 }
 
+function getAllUsers( req, res ){
+  var state = true;
+  User.find({ state: state }, ( err, stateUser ) => {
+    if (err) {
+      res.status(500).send({ message: 'Error al buscar el estado del usuario' });
+    }else {
+      if (stateUser) {
+        res.status(200).send({ user: stateUser, message: 'Usuarios no validados' });
+      }else {
+        res.status(404).send({ message: 'No hay solicitudes de registro' });
+      }
+    }
+  });
+}
+
 function getEvents( req, res ){
   var path_file = './img/imagenes/';
 
@@ -198,10 +213,10 @@ function saveUser( req, res ){
 function login( req, res ){
   var params = req.body;
 
-  var name = params.name;
+  var email = params.email;
   var password = params.password;
 
-  User.findOne({ name: name.toLowerCase() }, (err, user) => {
+  User.findOne({ email: email.toLowerCase() }, (err, user) => {
     if (err) {
       res.status(500).send({ message: 'Error al comprobar el usuario' });
     }else{
@@ -510,6 +525,71 @@ function updateEvent( req, res ){
   });
 }
 
+function getOrganization( req, res ){
+
+  User.find({}).exec(( err, usuario ) => {
+     if( err ){
+       res.status(500).send({ message: 'Error la petición' })
+     }else {
+       if ( !usuario ) {
+         res.status(404).send({ message: 'No hay usuarios' })
+       }else {
+         res.status(200).send({ usuario })
+       }
+     }
+  });
+}
+
+function getUserById( req, res ){
+  var id = req.params.id;
+
+  User.findById( id, ( err, user ) => {
+     if( err ){
+       res.status(500).send({ message: 'Error la petición' })
+     }else {
+       if ( !user ) {
+         res.status(404).send({ message: 'El usuario no existe' })
+       }else {
+         res.status(200).send({ user })
+       }
+     }
+  });
+}
+
+function updateUser( req, res ){
+  var userId = req.params.id;
+  var update = req.body;
+
+  if (update.pass == false) {
+    User.findByIdAndUpdate( userId, update, ( err, validate ) => {
+      if ( err ) {
+        res.status(500).send({ message: 'Error al buscar el usuario' });
+      }else {
+        if (validate) {
+          res.status(200).send({ message: 'Usuario actualizado'  });
+        }else {
+          res.status(404).send({ message: 'El usuario no se pudo actualizar' });
+        }
+      }
+    });
+  }else{
+    BCRYPT.hash(update.password, null, null, function( err, hash ){
+        update.password = hash;
+        User.findByIdAndUpdate( userId, update, ( err, validate ) => {
+          if ( err ) {
+            res.status(500).send({ message: 'Error al buscar el usuario' });
+          }else {
+            if (validate) {
+              res.status(200).send({ message: 'Usuario actualizado'  });
+            }else {
+              res.status(404).send({ message: 'El usuario no se pudo actualizar' });
+            }
+          }
+        });
+    });
+  }
+}
+
 //Exportar
 module.exports = {
   getEvents,
@@ -532,5 +612,9 @@ module.exports = {
   getLocations,
   saveCategory,
   getEventsById,
-  updateEvent
+  updateEvent,
+  getOrganization,
+  getUserById,
+  updateUser,
+  getAllUsers
 };
