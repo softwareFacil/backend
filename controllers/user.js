@@ -11,6 +11,7 @@ const Events = require( '../models/events' );
 const Catergories = require( '../models/categories' );
 const Location = require( '../models/location' );
 const Locations = require( '../models/location' );
+const Types = require( '../models/types' );
 
 //servicios jwt-simple
 var jwt = require( '../services/jwt' );
@@ -590,6 +591,37 @@ function updateUser( req, res ){
   }
 }
 
+function getTypeUsers( req, res ){
+  var type = req.params.type;
+
+  User.find({ type: type }, ( err, stateUser ) => {
+    if (err) {
+      res.status(500).send({ message: 'Error al buscar el tipo del usuario' });
+    }else {
+      if (stateUser) {
+        res.status(200).send({ user: stateUser, message: 'Usuarios no validados' });
+      }else {
+        res.status(404).send({ message: 'No hay solicitudes de registro' });
+      }
+    }
+  });
+}
+
+function getTypes( req, res ){
+
+  Types.find({}, ( err, type ) => {
+     if( err ){
+       res.status(500).send({ message: 'Error la petición' })
+     }else {
+       if ( !type ) {
+         res.status(404).send({ message: 'Los tipos de usuarios no se encontraron' })
+       }else {
+         res.status(200).send({ Tipos: type})
+       }
+     }
+  });
+}
+
 //Exportar
 module.exports = {
   getEvents,
@@ -616,5 +648,7 @@ module.exports = {
   getOrganization,
   getUserById,
   updateUser,
-  getAllUsers
+  getAllUsers,
+  getTypeUsers,
+  getTypes
 };

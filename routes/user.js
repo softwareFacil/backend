@@ -35,6 +35,9 @@ api.get( '/getOrganization', UserController.getOrganization );
 api.get( '/getUserById/:id', UserController.getUserById );
 api.put( '/updateUser/:id', UserController.updateUser );
 api.get( '/getAllUsers', UserController.getAllUsers );
+api.get( '/getTypeUsers/:type', UserController.getTypeUsers );
+api.get( '/getTypes', UserController.getTypes );
+
 
 
 
