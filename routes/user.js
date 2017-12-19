@@ -37,6 +37,7 @@ api.put( '/updateUser/:id', UserController.updateUser );
 api.get( '/getAllUsers', UserController.getAllUsers );
 api.get( '/getTypeUsers/:type', UserController.getTypeUsers );
 api.get( '/getTypes', UserController.getTypes );
+api.post( '/saveType', UserController.saveType );
 
 
 

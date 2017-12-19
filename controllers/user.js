@@ -171,7 +171,7 @@ function saveUser( req, res ){
   var params = req.body;
 
   //Asignar valores al objeto de usuario
-  if (params.password && params.name && params.descripcion && params.email && params.fono && params.ubicacion && params.foto) {
+  if (params.password && params.name && params.descripcion && params.email && params.fono && params.ubicacion && params.foto && params.Type ) {
     user.name = params.name;
     user.descripcion = params.descripcion;
     user.email = params.email;
@@ -180,6 +180,7 @@ function saveUser( req, res ){
     user.ubicacion = params.ubicacion;
     user.foto = params.foto;
     user.state = false;
+    user.Type = params.Type;
 
     User.findOne({ email: user.email.toLowerCase() }, (err, issetUser) => {
       if (err) {
@@ -493,6 +494,42 @@ function saveCategory( req, res ){
   }
 }
 
+function saveType( req, res ){
+  //Crear Objeto
+  var types = new Types();
+
+  //Tomar parametros
+  var params = req.body;
+
+  if ( params.nombre  ) {
+    types.nombre = params.nombre.toUpperCase();
+
+    Types.findOne({ nombre: types.nombre }, (err, issetTypes) => {
+      if (err) {
+        res.status(500).send({ message: 'Error al comprobar el lugar' })
+      }else{
+        if(!issetTypes){
+          types.save(( err, typ) => {
+            if ( err ) {
+              res.status(500).send({ message: 'Error al guardar el tipo de organización' });
+            }else {
+              if ( !typ ) {
+                res.status(404).send({ message: 'No se ha registrado el tipo de organización' });
+              }else {
+                res.status(200).send({ types: typ, message: 'Registro completado' })
+              }
+            }
+          });
+        }else {
+          res.status(200).send({ message: 'Ese tipo de organización ya se encuentra registrada' });
+        }
+      }
+    });
+  }else {
+    res.status(200).send({ message: 'Introduce los datos correctamente' });
+  }
+}
+
 function getEventsById( req, res ){
   var id = req.params.id;
 
@@ -650,5 +687,6 @@ module.exports = {
   updateUser,
   getAllUsers,
   getTypeUsers,
-  getTypes
+  getTypes,
+  saveType
 };

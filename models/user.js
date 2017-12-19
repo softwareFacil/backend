@@ -13,7 +13,7 @@ var UserSchema = Schema({
   fono: String,
   ubicacion: String,
   state: Boolean,
-  type: String
+  Type: String
 });
 
 module.exports = MONGOOSE.model( 'User', UserSchema );
